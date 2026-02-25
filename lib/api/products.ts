@@ -6,7 +6,7 @@ export interface Product {
     _id: string;
     name: string;
     description: string;
-    price: number;
+    price: number; // This will be the price in user's currency
     category: string;
     subcategory?: string;
     images: string[];
@@ -28,6 +28,7 @@ export interface ProductFilters {
     minPrice?: number;
     maxPrice?: number;
     tags?: string[];
+    country?: string; // Add country filter
 }
 
 export const getProducts = async (filters?: ProductFilters): Promise<Product[]> => {
@@ -38,6 +39,7 @@ export const getProducts = async (filters?: ProductFilters): Promise<Product[]> 
         if (filters?.minPrice) params.append('minPrice', filters.minPrice.toString());
         if (filters?.maxPrice) params.append('maxPrice', filters.maxPrice.toString());
         if (filters?.tags) filters.tags.forEach(tag => params.append('tags', tag));
+        if (filters?.country) params.append('country', filters.country);
 
         const response = await axiosInstance.get(`${API.PRODUCTS.GET_ALL}?${params}`);
         return response.data.data || response.data;

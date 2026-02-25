@@ -43,12 +43,15 @@ export default function AdminDashboard() {
 
       if (statsResponse.success) {
         setStats(statsResponse.data);
+      } else {
+        setError(statsResponse.message || "Failed to load dashboard data");
       }
       if (usersResponse.success) {
-        setRecentUsers(usersResponse.data);
+        setRecentUsers(Array.isArray(usersResponse.data) ? usersResponse.data : []);
+      } else {
+        setError(usersResponse.message || "Failed to load dashboard data");
       }
     } catch (error: any) {
-      console.error("Failed to fetch dashboard data:", error);
       setError(error.message || "Failed to load dashboard data");
     } finally {
       setLoading(false);
@@ -65,7 +68,8 @@ export default function AdminDashboard() {
     const activities: any[] = [];
 
     // Add recent user registrations
-    recentUsers.slice(0, 2).forEach((user) => {
+    const safeRecentUsers = Array.isArray(recentUsers) ? recentUsers : [];
+    safeRecentUsers.slice(0, 2).forEach((user) => {
       activities.push({
         action: "New user registered",
         user: user.fullName || user.name,

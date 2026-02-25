@@ -44,8 +44,10 @@ const AdminUsersPage = () => {
         role: roleFilter,
       });
       if (response.success) {
-        setUsers(response.data);
-        setPagination(response.pagination);
+        setUsers(Array.isArray(response.data) ? response.data : []);
+        setPagination(response.pagination || null);
+      } else {
+        toast.error(response.message || "Failed to fetch users");
       }
     } catch (error: any) {
       toast.error(error.message || "Failed to fetch users");
@@ -181,7 +183,7 @@ const AdminUsersPage = () => {
                   setRoleFilter(e.target.value);
                   setCurrentPage(1);
                 }}
-                className="pl-12 pr-8 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:border-primary-500 transition bg-white appearance-none cursor-pointer min-w-[150px]"
+                className="pl-12 pr-8 py-3 text-black  border-2 border-gray-200 rounded-xl focus:outline-none focus:border-primary-500 transition bg-white appearance-none cursor-pointer min-w-[150px]"
               >
                 <option value="all">All Roles</option>
                 <option value="user">Users</option>
@@ -193,7 +195,7 @@ const AdminUsersPage = () => {
             <button
               onClick={fetchUsers}
               disabled={loading}
-              className="inline-flex items-center gap-2 px-4 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition disabled:opacity-50"
+              className="inline-flex  text-black items-center gap-2 px-4 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition disabled:opacity-50"
             >
               <RefreshCw className={`w-5 h-5 ${loading ? "animate-spin" : ""}`} />
               Refresh
@@ -280,11 +282,12 @@ const AdminUsersPage = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {users.map((user, idx) => (
-                    <tr
-                      key={user._id}
-                      className="hover:bg-gray-50 transition"
-                    >
+                  {Array.isArray(users) && users.length > 0 ? (
+                    users.map((user, idx) => (
+                      <tr
+                        key={user._id}
+                        className="hover:bg-gray-50 transition"
+                      >
                       <td className="px-6 py-4 whitespace-nowrap">
                         <input
                           type="checkbox"
@@ -356,7 +359,14 @@ const AdminUsersPage = () => {
                         </div>
                       </td>
                     </tr>
-                  ))}
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={8} className="px-6 py-8 text-center text-gray-500">
+                        No users found
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -373,12 +383,12 @@ const AdminUsersPage = () => {
                 <button
                   onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                   disabled={!pagination.hasPrev}
-                  className="inline-flex items-center gap-1 px-4 py-2 border border-gray-200 rounded-lg hover:bg-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex text-black items-center gap-1 px-4 py-2 border border-gray-200 rounded-lg hover:bg-white transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <ChevronLeft className="w-4 h-4" />
                   Previous
                 </button>
-                <div className="flex items-center gap-1">
+                <div className="flex text-black items-center gap-1">
                   {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
                     let pageNum;
                     if (pagination.totalPages <= 5) {
@@ -408,7 +418,7 @@ const AdminUsersPage = () => {
                 <button
                   onClick={() => setCurrentPage((p) => Math.min(pagination.totalPages, p + 1))}
                   disabled={!pagination.hasNext}
-                  className="inline-flex items-center gap-1 px-4 py-2 border border-gray-200 rounded-lg hover:bg-white transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="inline-flex text-black items-center gap-1 px-4 py-2 border border-gray-200 rounded-lg hover:bg-white transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next
                   <ChevronRight className="w-4 h-4" />
