@@ -43,6 +43,25 @@ export interface AdminQueryParams {
   role?: string;
 }
 
+const isAuthError = (error: any): boolean => {
+  const status = error?.status;
+  return status === 401 || status === 403;
+};
+
+const buildUsersFailure = (message: string): UsersResponse => ({
+  success: false,
+  data: [],
+  pagination: {
+    page: 1,
+    limit: 0,
+    total: 0,
+    totalPages: 0,
+    hasNext: false,
+    hasPrev: false,
+  },
+  message,
+});
+
 // Get all users with pagination
 export const getAdminUsers = async (params: AdminQueryParams = {}): Promise<UsersResponse> => {
   try {
@@ -56,7 +75,10 @@ export const getAdminUsers = async (params: AdminQueryParams = {}): Promise<User
     const response = await axiosInstance.get<UsersResponse>(url);
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch users');
+    if (isAuthError(error)) {
+      return buildUsersFailure(error.message || 'Unauthorized');
+    }
+    throw new Error(error.message || 'Failed to fetch users');
   }
 };
 
@@ -128,7 +150,10 @@ export const getDashboardStats = async () => {
     const response = await axiosInstance.get(API.ADMIN.DASHBOARD);
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch dashboard stats');
+    if (isAuthError(error)) {
+      return { success: false, data: null, message: error.message || 'Unauthorized' };
+    }
+    throw new Error(error.message || 'Failed to fetch dashboard stats');
   }
 };
 
@@ -138,7 +163,10 @@ export const getRecentUsers = async (limit: number = 5): Promise<UsersResponse> 
     const response = await axiosInstance.get(`${API.ADMIN.USERS.GET_ALL}?limit=${limit}&page=1`);
     return response.data;
   } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch recent users');
+    if (isAuthError(error)) {
+      return buildUsersFailure(error.message || 'Unauthorized');
+    }
+    throw new Error(error.message || 'Failed to fetch recent users');
   }
 };
 
@@ -232,8 +260,9 @@ export interface AdminOrder {
   _id: string;
   userId: {
     _id: string;
-    name: string;
-    email: string;
+    name?: string;
+    fullName?: string;
+    email?: string;
   };
   items: AdminOrderItem[];
   total: number;

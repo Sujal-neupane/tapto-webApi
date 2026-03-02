@@ -58,6 +58,15 @@ export default function ProfileDropdown() {
             Profile
           </button>
           <button
+          className="w-full text-black text-left px-4 py-2 hover:bg-gray-100 text-sm"
+          onClick={()=>{
+            setOpen(false);
+            router.push("/user")
+          }}
+          >
+            Settings
+          </button>
+          <button
             className="w-full text-left px-4 py-2 hover:bg-gray-100 text-sm text-red-600"
             onClick={() => {
               logout();

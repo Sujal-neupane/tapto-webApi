@@ -138,7 +138,7 @@ export default function LandingPage() {
                   <div className="flex items-center justify-between">
                     <div className="flex flex-col">
                       <span className="text-[10px] text-gray-500 uppercase font-bold">New Drop</span>
-                      <span className="text-sm font-bold text-gray-900">$129.00</span>
+                      <span className="text-sm font-bold text-gray-900">NPR 1290.00</span>
                     </div>
                     <div className="w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center text-white">
                       <ShoppingBag className="w-4 h-4" />
@@ -242,7 +242,7 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <div className="text-sm text-gray-300">Total</div>
-                      <div className="font-bold text-xl">$142.50</div>
+                      <div className="font-bold text-xl">NPR 1420.50</div>
                     </div>
                   </div>
                   <div className="h-12 bg-primary-600 rounded-xl flex items-center justify-center font-bold shadow-lg shadow-primary-600/30 cursor-pointer hover:bg-primary-500 transition-colors">

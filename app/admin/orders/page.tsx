@@ -165,7 +165,7 @@ const AdminOrdersPage = () => {
     .filter(order => {
       const matchesSearch =
         order._id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.userId?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (order.userId?.fullName || order.userId?.name)?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         order.userId?.email?.toLowerCase().includes(searchTerm.toLowerCase());
 
       const matchesStatus = statusFilter === "all" || order.status.toLowerCase() === statusFilter.toLowerCase();
@@ -269,7 +269,7 @@ const AdminOrdersPage = () => {
                   placeholder="Search by order ID, customer name, or email..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4  text-black py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                 />
               </div>
             </div>
@@ -279,7 +279,7 @@ const AdminOrdersPage = () => {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
+                className="w-full px-4 py-3 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
               >
                 {statusOptions.map(option => (
                   <option key={option.value} value={option.value}>
@@ -298,7 +298,7 @@ const AdminOrdersPage = () => {
                   setSortBy(field as any);
                   setSortOrder(order as any);
                 }}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
+                className="w-full px-4 py-3 text-black border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
               >
                 <option value="date-desc">Newest First</option>
                 <option value="date-asc">Oldest First</option>
@@ -394,7 +394,7 @@ const AdminOrdersPage = () => {
                         <span className="text-sm font-medium text-gray-900">Customer</span>
                       </div>
                       <div className="space-y-1">
-                        <p className="text-sm font-medium text-gray-900">{order.userId?.name || 'N/A'}</p>
+                        <p className="text-sm font-medium text-gray-900">{order.userId?.fullName || order.userId?.name || 'N/A'}</p>
                         <div className="flex items-center space-x-1">
                           <Mail className="w-3 h-3 text-gray-500" />
                           <p className="text-xs text-gray-600">{order.userId?.email || 'N/A'}</p>
