@@ -170,81 +170,6 @@ export const getRecentUsers = async (limit: number = 5): Promise<UsersResponse> 
   }
 };
 
-// Product interfaces
-export interface AdminProduct {
-  _id: string;
-  name: string;
-  description: string;
-  price: number;
-  category: string;
-  images: string[];
-  tags?: string[];
-  discount?: number;
-  stock: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface ProductsResponse {
-  success: boolean;
-  data: AdminProduct[];
-  message?: string;
-}
-
-export interface ProductResponse {
-  success: boolean;
-  data: AdminProduct;
-  message?: string;
-}
-
-// Get all products
-export const getAdminProducts = async (): Promise<ProductsResponse> => {
-  try {
-    const response = await axiosInstance.get(API.ADMIN.PRODUCTS.GET_ALL);
-    return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Failed to fetch products');
-  }
-};
-
-// Create product (with FormData for image upload)
-export const createAdminProduct = async (formData: FormData): Promise<ProductResponse> => {
-  try {
-    const response = await axiosInstance.post<ProductResponse>(API.ADMIN.PRODUCTS.CREATE, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Failed to create product');
-  }
-};
-
-// Update product (with FormData for image upload)
-export const updateAdminProduct = async (id: string, formData: FormData): Promise<ProductResponse> => {
-  try {
-    const response = await axiosInstance.put<ProductResponse>(API.ADMIN.PRODUCTS.UPDATE(id), formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-    return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Failed to update product');
-  }
-};
-
-// Delete product
-export const deleteAdminProduct = async (id: string): Promise<{ success: boolean; message: string }> => {
-  try {
-    const response = await axiosInstance.delete(API.ADMIN.PRODUCTS.DELETE(id));
-    return response.data;
-  } catch (error: any) {
-    throw new Error(error.response?.data?.message || 'Failed to delete product');
-  }
-};
-
 // Order interfaces
 export interface AdminOrderItem {
   productId: string;
@@ -356,5 +281,98 @@ export const assignDriverToOrder = async (orderId: string, driverId: string): Pr
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || 'Failed to assign driver');
+  }
+};
+
+// Product interfaces and functions
+export interface AdminProduct {
+  _id: string;
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  stock: number;
+  images: string[];
+  discount?: number;
+  isActive?: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateProductPayload {
+  name: string;
+  description: string;
+  price: number;
+  category: string;
+  stock: number;
+  discount?: number;
+  images?: File[];
+}
+
+// Get all products (admin)
+export const getAdminProducts = async (params: AdminQueryParams = {}): Promise<{ success: boolean; data: AdminProduct[]; message?: string }> => {
+  try {
+    const queryParams = new URLSearchParams();
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.limit) queryParams.append('limit', params.limit.toString());
+    if (params.search) queryParams.append('search', params.search);
+
+    const url = `${API.ADMIN.PRODUCTS.GET_ALL}?${queryParams.toString()}`;
+    const response = await axiosInstance.get(url);
+    return response.data;
+  } catch (error: any) {
+    console.error('Error fetching admin products:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to fetch products');
+  }
+};
+
+// Create product (with image upload)
+export const createAdminProduct = async (formData: FormData): Promise<{ success: boolean; data: AdminProduct; message?: string }> => {
+  try {
+    console.log('Creating product with FormData...');
+    const response = await axiosInstance.post(
+      API.ADMIN.PRODUCTS.CREATE,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    );
+    console.log('Product creation response:', response.data);
+    return response.data;
+  } catch (error: any) {
+    console.error('Error creating product:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to create product');
+  }
+};
+
+// Update product (with image upload)
+export const updateAdminProduct = async (productId: string, formData: FormData): Promise<{ success: boolean; data: AdminProduct; message?: string }> => {
+  try {
+    const response = await axiosInstance.patch(
+      API.ADMIN.PRODUCTS.UPDATE(productId),
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    );
+    return response.data;
+  } catch (error: any) {
+    console.error('Error updating product:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to update product');
+  }
+};
+
+// Delete product
+export const deleteAdminProduct = async (productId: string): Promise<{ success: boolean; message?: string }> => {
+  try {
+    const response = await axiosInstance.delete(API.ADMIN.PRODUCTS.DELETE(productId));
+    return response.data;
+  } catch (error: any) {
+    console.error('Error deleting product:', error.response?.data || error.message);
+    throw new Error(error.response?.data?.message || 'Failed to delete product');
   }
 };

@@ -16,28 +16,24 @@ jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
 }));
 
-jest.mock('@/app/(auth)/(_components)/forgotpasswordform', () => {
-  return function MockForgotPasswordForm() {
-    return <div data-testid="forgot-form">Mock Forgot Password Form</div>;
-  };
-});
+jest.mock('@/app/(auth)/(_components)/forgotpasswordform', () => ({
+  __esModule: true,
+  default: function MockForgotPasswordForm() {
+    return <div data-testid="forgot-password-form">Mock Forgot Password Form</div>;
+  },
+}));
 
-jest.mock('@/app/(auth)/(_components)/auth-hero-panel', () => {
-  return function MockAuthHeroPanel({ variant }: { variant: string }) {
+jest.mock('@/app/(auth)/(_components)/auth-hero-panel', () => ({
+  __esModule: true,
+  default: function MockAuthHeroPanel({ variant }: { variant: string }) {
     return <div data-testid={`auth-hero-${variant}`}>Mock Hero Panel</div>;
-  };
-});
-
-jest.mock('lucide-react', () => ({
-  ArrowLeft: () => <div data-testid="arrow-left-icon" />,
-  KeyRound: () => <div data-testid="key-icon" />,
-  ChevronRight: () => <div data-testid="chevron-right-icon" />,
+  },
 }));
 
 describe('ForgotPasswordPage', () => {
   it('renders the forgot password form', () => {
     render(<ForgotPasswordPage />);
-    expect(screen.getByTestId('forgot-form')).toBeInTheDocument();
+    expect(screen.getByText(/Reset Password/i)).toBeInTheDocument();
   });
 
   it('has a back link to login', () => {

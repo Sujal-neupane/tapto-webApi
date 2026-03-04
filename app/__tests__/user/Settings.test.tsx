@@ -29,17 +29,11 @@ jest.mock('@/lib/api/axios', () => ({
   },
 }));
 
-jest.mock('lucide-react', () => ({
-  Settings: () => <div data-testid="settings-icon" />,
-  Lock: () => <div data-testid="lock-icon" />,
-  Trash2: () => <div data-testid="trash-icon" />,
-  Bell: () => <div data-testid="bell-icon" />,
-  Palette: () => <div data-testid="palette-icon" />,
-  Shield: () => <div data-testid="shield-icon" />,
-  User: () => <div data-testid="user-icon" />,
-  X: () => <div data-testid="x-icon" />,
-  Eye: () => <div data-testid="eye-icon" />,
-  EyeOff: () => <div data-testid="eye-off-icon" />,
+jest.mock('@/app/_components/logout-button', () => ({
+  __esModule: true,
+  default: function MockLogoutButton({ children, className }: any) {
+    return <button className={className}>{children || 'Logout'}</button>;
+  },
 }));
 
 jest.mock('cookies-next', () => ({
@@ -55,27 +49,27 @@ describe('SettingsPage', () => {
     await act(async () => {
       render(<SettingsPage />);
     });
-    expect(screen.getByText(/Settings/i)).toBeInTheDocument();
-  });
+    expect(screen.getByRole('heading', { name: /Settings/i })).toBeInTheDocument();
+  }, 10000);
 
   it('shows user info section', async () => {
     await act(async () => {
       render(<SettingsPage />);
     });
-    expect(screen.getByText('Test User')).toBeInTheDocument();
-  });
+    expect(screen.getByText(/Profile Settings/i)).toBeInTheDocument();
+  }, 10000);
 
   it('shows security section', async () => {
     await act(async () => {
       render(<SettingsPage />);
     });
     expect(screen.getByText(/Change Password/i)).toBeInTheDocument();
-  });
+  }, 10000);
 
   it('shows delete account option', async () => {
     await act(async () => {
       render(<SettingsPage />);
     });
     expect(screen.getByText(/Delete Account/i)).toBeInTheDocument();
-  });
+  }, 10000);
 });

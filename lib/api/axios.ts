@@ -56,10 +56,22 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     (error: AxiosError) => {
-        console.error('[Axios] Response error:', error.response?.status, error.config?.url, error.message);
+        const status = error.response?.status;
+        const url = error.config?.url;
+        const errorData = error.response?.data as any;
+        const errorMessage = errorData?.message || error.message;
+
+        console.error('[Axios] Response error:', {
+            status,
+            url,
+            message: errorMessage,
+            responseData: errorData,
+            fullError: error
+        });
         
         // Handle authentication errors
-        if (error.response?.status === 401) {
+        if (status === 401) {
+            console.warn('[Axios] Unauthorized - clearing auth tokens');
             // Clear auth token and cookies on unauthorized
             if (typeof window !== 'undefined') {
                 const { deleteCookie } = require('cookies-next');
@@ -69,6 +81,16 @@ axiosInstance.interceptors.response.use(
                 localStorage.removeItem('user');
             }
         }
+
+        // Handle server errors (500+)
+        if (status && status >= 500) {
+            console.error('[Axios] Server error:', {
+                status,
+                url,
+                timestamp: new Date().toISOString()
+            });
+        }
+
         return Promise.reject(error);
     }
 );

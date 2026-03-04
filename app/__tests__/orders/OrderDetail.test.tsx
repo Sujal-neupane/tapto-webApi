@@ -64,7 +64,7 @@ describe('OrdersPage', () => {
     await act(async () => {
       render(<OrdersPage />);
     });
-    expect(screen.getByText(/Orders/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /My Orders/i })).toBeInTheDocument();
   });
 
   it('shows filter options', async () => {

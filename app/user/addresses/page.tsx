@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/context/auth-context";
 import {
@@ -38,6 +39,7 @@ export default function AddressesPage() {
   const [editingAddress, setEditingAddress] = useState<Address | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState<CreateAddressData>({
@@ -58,6 +60,10 @@ export default function AddressesPage() {
     }
     if (user) fetchAddresses();
   }, [user, authLoading]);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const fetchAddresses = async () => {
     try {
@@ -159,47 +165,11 @@ export default function AddressesPage() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200">
-        <div className="mx-auto max-w-4xl px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <Link
-                href="/user"
-                className="p-2 rounded-lg hover:bg-gray-100 transition"
-              >
-                <ArrowLeft className="w-5 h-5 text-gray-600" />
-              </Link>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  My Addresses
-                </h1>
-                <p className="text-gray-600 text-sm mt-1">
-                  Manage your shipping addresses
-                </p>
-              </div>
-            </div>
-            <button
-              onClick={() => {
-                resetForm();
-                setShowForm(true);
-              }}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition shadow-md"
-            >
-              <Plus className="w-4 h-4" />
-              Add Address
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-4xl px-4 py-8">
-        {/* Address Form Modal */}
-        {showForm && (
-          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+  const addressFormModal =
+    showForm && isMounted
+      ? createPortal(
+          <div className="fixed inset-0 bg-black/50 z-[1000] flex items-center justify-center p-4">
+            <div className="bg-white rounded-2xl shadow-2xl w-[min(92vw,42rem)] min-w-[320px] max-h-[90vh] overflow-y-auto overflow-x-hidden">
               <div className="flex items-center justify-between p-6 border-b border-gray-200">
                 <h2 className="text-xl font-bold text-gray-900">
                   {editingAddress ? "Edit Address" : "Add New Address"}
@@ -226,7 +196,7 @@ export default function AddressesPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, fullName: e.target.value })
                         }
-                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         placeholder="John Doe"
                         required
                       />
@@ -245,7 +215,7 @@ export default function AddressesPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, phone: e.target.value })
                         }
-                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         placeholder="+1 234 567 8900"
                         required
                       />
@@ -264,7 +234,7 @@ export default function AddressesPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, street: e.target.value })
                         }
-                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                         placeholder="123 Main Street"
                         required
                       />
@@ -281,7 +251,7 @@ export default function AddressesPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, city: e.target.value })
                       }
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="New York"
                       required
                     />
@@ -297,7 +267,7 @@ export default function AddressesPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, state: e.target.value })
                       }
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="NY"
                     />
                   </div>
@@ -312,7 +282,7 @@ export default function AddressesPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, zipCode: e.target.value })
                       }
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="10001"
                       required
                     />
@@ -328,7 +298,7 @@ export default function AddressesPage() {
                       onChange={(e) =>
                         setFormData({ ...formData, country: e.target.value })
                       }
-                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                      className="w-full px-4 py-2.5 border border-gray-300 rounded-xl text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       placeholder="United States"
                       required
                     />
@@ -371,8 +341,49 @@ export default function AddressesPage() {
                 </div>
               </form>
             </div>
+          </div>,
+          document.body
+        )
+      : null;
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="mx-auto max-w-4xl px-4 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Link
+                href="/user"
+                className="p-2 rounded-lg hover:bg-gray-100 transition"
+              >
+                <ArrowLeft className="w-5 h-5 text-gray-600" />
+              </Link>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  My Addresses
+                </h1>
+                <p className="text-gray-600 text-sm mt-1">
+                  Manage your shipping addresses
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                resetForm();
+                setShowForm(true);
+              }}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition shadow-md"
+            >
+              <Plus className="w-4 h-4" />
+              Add Address
+            </button>
           </div>
-        )}
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-4xl px-4 py-8">
+        {addressFormModal}
 
         {/* Address List */}
         {addresses.length === 0 ? (
