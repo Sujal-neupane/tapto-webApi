@@ -69,7 +69,7 @@ describe('WishlistPage', () => {
     await act(async () => {
       render(<WishlistPage />);
     });
-    expect(screen.getByText(/Wishlist/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /My Wishlist/i })).toBeInTheDocument();
   });
 
   it('shows empty state when no items', async () => {

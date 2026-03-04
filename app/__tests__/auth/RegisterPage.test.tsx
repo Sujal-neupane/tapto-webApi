@@ -16,22 +16,18 @@ jest.mock('next/navigation', () => ({
   useRouter: () => ({ push: jest.fn(), refresh: jest.fn() }),
 }));
 
-jest.mock('@/app/(auth)/(_components)/registerform', () => {
-  return function MockRegisterForm() {
+jest.mock('@/app/(auth)/(_components)/registerform', () => ({
+  __esModule: true,
+  default: function MockRegisterForm() {
     return <div data-testid="register-form">Mock Register Form</div>;
-  };
-});
+  },
+}));
 
-jest.mock('@/app/(auth)/(_components)/auth-hero-panel', () => {
-  return function MockAuthHeroPanel({ variant }: { variant: string }) {
+jest.mock('@/app/(auth)/(_components)/auth-hero-panel', () => ({
+  __esModule: true,
+  default: function MockAuthHeroPanel({ variant }: { variant: string }) {
     return <div data-testid={`auth-hero-${variant}`}>Mock Hero Panel</div>;
-  };
-});
-
-jest.mock('lucide-react', () => ({
-  ArrowLeft: () => <div data-testid="arrow-left-icon" />,
-  UserPlus: () => <div data-testid="user-plus-icon" />,
-  ChevronRight: () => <div data-testid="chevron-right-icon" />,
+  },
 }));
 
 describe('RegisterPage', () => {

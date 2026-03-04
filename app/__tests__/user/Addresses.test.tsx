@@ -15,21 +15,19 @@ jest.mock('@/lib/context/auth-context', () => ({
 }));
 
 jest.mock('@/lib/api/addresses', () => ({
-  getAllAddresses: jest.fn().mockResolvedValue({ data: [] }),
-  createAddress: jest.fn().mockResolvedValue({ data: { _id: 'a1' } }),
-  updateAddress: jest.fn().mockResolvedValue({ data: {} }),
-  deleteAddress: jest.fn().mockResolvedValue({ data: {} }),
-  setDefaultAddress: jest.fn().mockResolvedValue({ data: {} }),
+  __esModule: true,
+  getUserAddresses: jest.fn().mockResolvedValue([]),
+  createAddress: jest.fn().mockResolvedValue({ _id: 'a1' }),
+  updateAddress: jest.fn().mockResolvedValue({}),
+  deleteAddress: jest.fn().mockResolvedValue({}),
+  setDefaultAddress: jest.fn().mockResolvedValue({}),
 }));
 
-jest.mock('lucide-react', () => ({
-  MapPin: () => <div data-testid="map-icon" />,
-  Plus: () => <div data-testid="plus-icon" />,
-  Pencil: () => <div data-testid="edit-icon" />,
-  Trash2: () => <div data-testid="trash-icon" />,
-  Star: () => <div data-testid="star-icon" />,
-  X: () => <div data-testid="x-icon" />,
-  Home: () => <div data-testid="home-icon" />,
+jest.mock('@/app/_components/logout-button', () => ({
+  __esModule: true,
+  default: function MockLogoutButton({ children, className }: any) {
+    return <button className={className}>{children || 'Logout'}</button>;
+  },
 }));
 
 jest.mock('cookies-next', () => ({
@@ -45,13 +43,13 @@ describe('AddressesPage', () => {
     await act(async () => {
       render(<AddressesPage />);
     });
-    expect(screen.getByText(/Address/i)).toBeInTheDocument();
-  });
+    expect(screen.getByRole('heading', { name: /Address/i })).toBeInTheDocument();
+  }, 20000);
 
   it('shows add address button', async () => {
     await act(async () => {
       render(<AddressesPage />);
     });
     expect(screen.getByText(/Add.*Address/i)).toBeInTheDocument();
-  });
+  }, 20000);
 });

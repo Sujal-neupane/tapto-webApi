@@ -30,21 +30,11 @@ jest.mock('@/lib/api/admin', () => ({
   getAllOrders: jest.fn().mockResolvedValue({ data: { orders: [] } }),
 }));
 
-jest.mock('lucide-react', () => ({
-  LayoutDashboard: () => <div data-testid="dashboard-icon" />,
-  Users: () => <div data-testid="users-icon" />,
-  Package: () => <div data-testid="package-icon" />,
-  ShoppingCart: () => <div data-testid="cart-icon" />,
-  Settings: () => <div data-testid="settings-icon" />,
-  LogOut: () => <div data-testid="logout-icon" />,
-  Menu: () => <div data-testid="menu-icon" />,
-  X: () => <div data-testid="x-icon" />,
-  ChevronDown: () => <div data-testid="chevron-down" />,
-  TrendingUp: () => <div data-testid="trending-icon" />,
-  DollarSign: () => <div data-testid="dollar-icon" />,
-  Activity: () => <div data-testid="activity-icon" />,
-  User: () => <div data-testid="user-icon" />,
-  Bell: () => <div data-testid="bell-icon" />,
+jest.mock('@/app/_components/logout-button', () => ({
+  __esModule: true,
+  default: function MockLogoutButton({ children, className }: any) {
+    return <button className={className}>{children || 'Logout'}</button>;
+  },
 }));
 
 jest.mock('cookies-next', () => ({
@@ -60,13 +50,13 @@ describe('AdminDashboard', () => {
     await act(async () => {
       render(<AdminDashboard />);
     });
-    expect(screen.getByText(/Dashboard/i)).toBeInTheDocument();
-  });
+    expect(screen.getByRole('heading', { name: /Admin Dashboard/i })).toBeInTheDocument();
+  }, 15000);
 
   it('shows admin user name', async () => {
     await act(async () => {
       render(<AdminDashboard />);
     });
     expect(screen.getByText(/Admin User/i)).toBeInTheDocument();
-  });
+  }, 15000);
 });

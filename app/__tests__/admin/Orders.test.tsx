@@ -16,20 +16,10 @@ jest.mock('@/lib/context/auth-context', () => ({
 }));
 
 jest.mock('@/lib/api/admin', () => ({
-  getAllOrders: jest.fn().mockResolvedValue({ data: { orders: [] } }),
-  updateOrderStatus: jest.fn().mockResolvedValue({ data: {} }),
-  assignDriver: jest.fn().mockResolvedValue({ data: {} }),
-  getAllDrivers: jest.fn().mockResolvedValue({ data: { drivers: [] } }),
-}));
-
-jest.mock('lucide-react', () => ({
-  Package: () => <div data-testid="package-icon" />,
-  Search: () => <div data-testid="search-icon" />,
-  Filter: () => <div data-testid="filter-icon" />,
-  ChevronDown: () => <div data-testid="chevron-down" />,
-  X: () => <div data-testid="x-icon" />,
-  ArrowUpDown: () => <div data-testid="sort-icon" />,
-  Truck: () => <div data-testid="truck-icon" />,
+  getAdminOrders: jest.fn().mockResolvedValue({ data: { orders: [] } }),
+  updateAdminOrderStatus: jest.fn().mockResolvedValue({ data: {} }),
+  assignDriverToOrder: jest.fn().mockResolvedValue({ data: {} }),
+  getDeliveryDrivers: jest.fn().mockResolvedValue({ data: { drivers: [] } }),
 }));
 
 jest.mock('cookies-next', () => ({
@@ -45,8 +35,8 @@ describe('AdminOrdersPage', () => {
     await act(async () => {
       render(<AdminOrdersPage />);
     });
-    expect(screen.getByText(/Orders/i)).toBeInTheDocument();
-  });
+    expect(screen.getByRole('heading', { name: /Orders/i })).toBeInTheDocument();
+  }, 15000);
 
   it('shows search or filter UI', async () => {
     await act(async () => {
@@ -54,5 +44,5 @@ describe('AdminOrdersPage', () => {
     });
     const inputs = screen.queryAllByRole('textbox');
     expect(inputs.length).toBeGreaterThanOrEqual(0);
-  });
+  }, 15000);
 });

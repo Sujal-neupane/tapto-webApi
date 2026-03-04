@@ -22,14 +22,16 @@ jest.mock('@/lib/hooks/useCurrency', () => ({
   }),
 }));
 
-jest.mock('lucide-react', () => ({
-  CreditCard: () => <div data-testid="credit-card-icon" />,
-  Plus: () => <div data-testid="plus-icon" />,
-  Trash2: () => <div data-testid="trash-icon" />,
-  Star: () => <div data-testid="star-icon" />,
-  X: () => <div data-testid="x-icon" />,
+jest.mock('@/lib/api/orders', () => ({
+  getMyOrders: jest.fn().mockResolvedValue([]),
+  cancelOrder: jest.fn().mockResolvedValue({}),
 }));
-
+jest.mock('@/app/_components/logout-button', () => ({
+  __esModule: true,
+  default: function MockLogoutButton({ children, className }: any) {
+    return <button className={className}>{children || 'Logout'}</button>;
+  },
+}));
 jest.mock('cookies-next', () => ({
   setCookie: jest.fn(),
   deleteCookie: jest.fn(),
@@ -43,7 +45,7 @@ describe('PaymentPage', () => {
     await act(async () => {
       render(<PaymentPage />);
     });
-    expect(screen.getByText(/Payment/i)).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Payment Methods/i })).toBeInTheDocument();
   });
 
   it('shows add payment method button', async () => {
